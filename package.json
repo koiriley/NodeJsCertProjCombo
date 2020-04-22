@@ -1,19 +1,26 @@
 {
-  "name": "chat-app",
+  "name": "node_learning",
   "version": "1.0.0",
+  "description": "final project draft1",
   "main": "index.js",
   "scripts": {
-    "devStart": "nodemon server.js",
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shahedakc/NodeJsCertificationProject.git"
+  },
+  "author": "shaheda",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shahedakc/NodeJsCertificationProject/issues"
+  },
+  "homepage": "https://github.com/shahedakc/NodeJsCertificationProject#readme",
   "dependencies": {
+    "ejs": "^3.0.2",
     "express": "^4.17.1",
-    "socket.io": "^2.3.0"
-  },
-  "devDependencies": {
-    "nodemon": "^1.19.4"
-  },
-  "description": ""
+    "node.js": "0.0.1-security",
+    "requests": "^0.3.0",
+    "require": "^2.4.20"
+  }
 }
