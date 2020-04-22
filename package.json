@@ -1,26 +1,23 @@
 {
-  "name": "node_learning",
+  "name": "weather-app",
   "version": "1.0.0",
-  "description": "final project draft1",
-  "main": "index.js",
+  "description": "Node App with EJS",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/shahedakc/NodeJsCertificationProject.git"
-  },
-  "author": "shaheda",
+  "keywords": [
+    "Node",
+    "EJS"
+  ],
+  "author": "Koi",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/shahedakc/NodeJsCertificationProject/issues"
-  },
-  "homepage": "https://github.com/shahedakc/NodeJsCertificationProject#readme",
   "dependencies": {
-    "ejs": "^3.0.2",
-    "express": "^4.17.1",
-    "node.js": "0.0.1-security",
-    "requests": "^0.3.0",
-    "require": "^2.4.20"
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "moment": "^2.24.0",
+    "request": "^2.88.0"
   }
 }
