@@ -1,64 +1,89 @@
-const express = require('express');
+import express from 'express';
+const MongoClient = require('mongodb').MongoClient;
+import bodyParser from 'body-parser';
+const port = 8900;
 const app = express();
-const request = require('request');
-const port = 5400;
+let db;
+const mongourl = 'mongodb://127.0.0.1:27017/'
+const col_name = 'articlelist';
 
-const weatherUrl = "http://api.openweathermap.org/data/2.5/forecast/daily?q=Atlanta&mode=json&units=imperial&cnt=5&appid=fbf712a5a83d7305c3cda4ca8fe7ef29";
-
-// Static file path
 app.use(express.static(__dirname+'/public'));
-// Html or rending Path
-app.set('views', './src/views');
-// View engine specification
+
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
+
 app.set('view engine', 'ejs');
+app.set('views', './views');
 
-
-function getWeather(url) {
-    // Setting URL and headers for request
-    var options = {
-        url: weatherUrl,
-        headers: {
-            'User-Agent': 'request'
-        }
-    };
-    // Return new promise 
-    return new Promise(function(resolve, reject) {
-        // Do async job
-        request.get(options, function(err, resp, body) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(body);
-            }
-        })
+// Get Data from datbase and display on index
+app.get('/', (req,res)=>{
+    db.collection(col_name).find().toArray((err,result) => {
+        if(err) throw err;
+        res.render('index.ejs',{data:result})
     })
-}
-// Weather Api Route
-app.get('/',(req,res) => {
-    var dataPromise = getWeather();
-    // Get user details after that get followers from URL
-    dataPromise.then(JSON.parse)
-               .then(function(result) {
-                    res.render('main',{result,title:'5 Day Weather Forecast'})
-                })
 })
 
-//Weather Api Without promise
-app.get('/weatherwithoutpromise',(req,res) => {
-    request(url, (err,response,body) =>{
-        if(err){
-            console.log(err);
-        } else {
-           
-            const output = JSON.parse(body);
-            res.send(output);
-        }
-    });
+// Post data from ui
+app.post('/addData', (req,res) => {
+    db.collection(col_name)
+        // In Req.body we will recive the data
+        // from form.
+        .insert(req.body, (err,result) => {
+            if(err) throw err;
+            console.log('data.inserted');
+        })
+    res.redirect('/');
+})
+
+// Delete Selected User
+app.delete('/delete_article',(req,res) => {
+    db.collection(col_name).findOneAndDelete({
+        "title":req.body.title
+    },(err,result) => {
+        if (err) return res.send(500,err)
+        res.send({message: 'success'})
+    })
+})
+
+// Find article by title
+app.post('/find_by_title',(req,res) => {
+    let title = req.body.title;
+    db.collection(col_name)
+      .find({title:title})
+      .toArray((err,result) => {
+          if(err) throw err;
+          res.send(result)
+      })
 });
 
-// Outputs if app is running successfully
-app.listen(port ,(err) => {
-    if(err) { console.log('error in api call')}
-    else{ console.log ('App is running on port '+port)}
+// Edit Article
+app.put('/edit',(req,res)=>{
+    db.collection(col_name)
+        .findOneAndUpdate({"title":req.body.title},{
+            $set:{
+                title:req.body.title,
+                description:req.body.description,
+                url:req.body.url,
+                img:req.body.img,
+                date:req.body.date
+            }
+        },{
+            upsert:true
+        },(err,result) => {
+            if(err) return res.send(err);
+            res.send(result)
+        })
 })
 
+// Opening Edit Article Page
+app.get('/admin/addArticle',(req,res) => {
+    res.render('add-news')
+})
+
+MongoClient.connect(mongourl,(err,client) => {
+    if(err) throw err;
+    db = client.db('march_dashboard')
+    app.listen(port, ()=> {
+        console.log(`Server running on port ${port}`)
+    })
+})
